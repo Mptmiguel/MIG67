@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - 1Rep Pro</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        body {
+            background: var(--gradient-bg);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .register-container {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            max-width: 1000px;
+            margin: 2rem auto;
+        }
+        
+        .register-form-section {
+            padding: 3rem;
+        }
+        
+        .register-brand {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .register-brand h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control {
+            border-radius: 15px;
+            padding: 1rem 1.5rem;
+            border: 2px solid #e9ecef;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.1);
+        }
+        
+        .btn-register {
+            background: linear-gradient(45deg, var(--secondary-color), #5dade2);
+            border: none;
+            border-radius: 15px;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
+            color: white;
+        }
+        
+        .register-info-section {
+            background: linear-gradient(135deg, var(--primary-color), #34495e);
+            color: white;
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .user-type-selector {
+            margin-bottom: 2rem;
+        }
+        
+        .user-type-option {
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .user-type-option:hover {
+            border-color: var(--secondary-color);
+        }
+        
+        .user-type-option.selected {
+            border-color: var(--secondary-color);
+            background: rgba(52, 152, 219, 0.1);
+        }
+        
+        .strength-indicator {
+            height: 5px;
+            border-radius: 3px;
+            margin-top: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .strength-weak { width: 25%; background: #e74c3c; }
+        .strength-medium { width: 50%; background: #f39c12; }
+        .strength-good { width: 75%; background: #27ae60; }
+        .strength-strong { width: 100%; background: #27ae60; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="register-container">
+            <div class="row g-0">
+                <div class="col-lg-7">
+                    <div class="register-form-section">
+                        <div class="register-brand">
+                            <h1>
+                                <i class="bi bi-lightning-charge-fill text-primary"></i>
+                                1Rep Pro
+                            </h1>
+                            <p class="text-muted">Crie sua conta e comece agora</p>
+                        </div>
+                        
+                        <!-- Alert Messages -->
+                        <div id="alertContainer"></div>
+                        
+                        <!-- Registration Form -->
+                        <form id="registerForm" novalidate>
+                            <!-- User Type Selection -->
+                            <div class="user-type-selector">
+                                <label class="form-label fw-bold">Tipo de Conta</label>
+                                <div class="user-type-option" data-type="client">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-person fs-4 text-primary me-3"></i>
+                                        <div>
+                                            <h6 class="mb-1">Cliente/Atleta</h6>
+                                            <small class="text-muted">Acesso aos módulos de monitoramento pessoal</small>
+                                        </div>
+                                        <i class="bi bi-check-circle-fill text-success ms-auto d-none"></i>
+                                    </div>
+                                </div>
+                                <div class="user-type-option" data-type="coach">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-award fs-4 text-primary me-3"></i>
+                                        <div>
+                                            <h6 class="mb-1">Coach/Profissional</h6>
+                                            <small class="text-muted">Acesso completo a todos os módulos profissionais</small>
+                                        </div>
+                                        <i class="bi bi-check-circle-fill text-success ms-auto d-none"></i>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="userType" name="is_coach" required>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="username" class="form-label">Nome de Usuário</label>
+                                        <input type="text" class="form-control" id="username" name="username" required>
+                                        <div class="invalid-feedback">
+                                            Nome de usuário é obrigatório.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">E-mail</label>
+                                        <input type="email" class="form-control" id="email" name="email" required>
+                                        <div class="invalid-feedback">
+                                            E-mail válido é obrigatório.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Senha</label>
+                                <div class="position-relative">
+                                    <input type="password" class="form-control" id="password" name="password" 
+                                           required minlength="8" oninput="checkPasswordStrength()">
+                                    <button type="button" class="btn position-absolute" 
+                                            style="right: 10px; top: 50%; transform: translateY(-50%); border: none; background: none;"
+                                            onclick="togglePassword('password')">
+                                        <i class="bi bi-eye" id="passwordToggleIcon"></i>
+                                    </button>
+                                </div>
+                                <div class="strength-indicator" id="strengthIndicator"></div>
+                                <div class="form-text">
+                                    Mínimo 8 caracteres, incluindo números e símbolos.
+                                </div>
+                                <div class="invalid-feedback">
+                                    Senha deve ter pelo menos 8 caracteres.
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">Confirmar Senha</label>
+                                <div class="position-relative">
+                                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                                    <button type="button" class="btn position-absolute" 
+                                            style="right: 10px; top: 50%; transform: translateY(-50%); border: none; background: none;"
+                                            onclick="togglePassword('confirmPassword')">
+                                        <i class="bi bi-eye" id="confirmPasswordToggleIcon"></i>
+                                    </button>
+                                </div>
+                                <div class="invalid-feedback">
+                                    Senhas devem coincidir.
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="agreeTerms" name="agreeTerms" required>
+                                <label class="form-check-label" for="agreeTerms">
+                                    Concordo com os <a href="#" class="text-primary">Termos de Uso</a> 
+                                    e <a href="#" class="text-primary">Política de Privacidade</a>
+                                </label>
+                                <div class="invalid-feedback">
+                                    Você deve concordar com os termos.
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="newsletter" name="newsletter">
+                                <label class="form-check-label" for="newsletter">
+                                    Quero receber atualizações e novidades por e-mail
+                                </label>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-register" id="registerBtn">
+                                <i class="bi bi-person-plus me-2"></i>
+                                Criar Conta
+                            </button>
+                        </form>
+                        
+                        <div class="text-center mt-3">
+                            <p class="mb-0">
+                                Já tem uma conta? 
+                                <a href="{{ url_for('login') }}" class="text-primary text-decoration-none">
+                                    Entre aqui
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-5">
+                    <div class="register-info-section">
+                        <h3>Junte-se aos profissionais</h3>
+                        <p class="mb-4">
+                            Mais de 1000+ coaches já utilizam nossa plataforma para 
+                            otimizar a performance de seus atletas.
+                        </p>
+                        
+                        <div class="text-start">
+                            <div class="mb-3">
+                                <i class="bi bi-check-circle-fill text-success me-3"></i>
+                                <strong>14 dias grátis</strong> para testar todos os recursos
+                            </div>
+                            <div class="mb-3">
+                                <i class="bi bi-check-circle-fill text-success me-3"></i>
+                                <strong>Suporte especializado</strong> durante a implementação
+                            </div>
+                            <div class="mb-3">
+                                <i class="bi bi-check-circle-fill text-success me-3"></i>
+                                <strong>Atualizações constantes</strong> baseadas em evidências
+                            </div>
+                            <div class="mb-3">
+                                <i class="bi bi-check-circle-fill text-success me-3"></i>
+                                <strong>Comunidade exclusiva</strong> de profissionais
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 p-3" style="background: rgba(255,255,255,0.1); border-radius: 15px;">
+                            <small>
+                                <i class="bi bi-shield-check me-2"></i>
+                                Seus dados estão protegidos com criptografia de ponta
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center py-5">
+                    <i class="bi bi-check-circle-fill text-success mb-3" style="font-size: 4rem;"></i>
+                    <h4>Conta criada com sucesso!</h4>
+                    <p class="text-muted">
+                        Bem-vindo ao 1Rep Pro. Redirecionando para seu dashboard...
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        let selectedUserType = null;
+        
+        // User type selection
+        document.querySelectorAll('.user-type-option').forEach(option => {
+            option.addEventListener('click', function() {
+                // Remove selection from all options
+                document.querySelectorAll('.user-type-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                    opt.querySelector('.bi-check-circle-fill').classList.add('d-none');
+                });
+                
+                // Add selection to clicked option
+                this.classList.add('selected');
+                this.querySelector('.bi-check-circle-fill').classList.remove('d-none');
+                
+                selectedUserType = this.dataset.type;
+                document.getElementById('userType').value = selectedUserType === 'coach' ? 'true' : 'false';
+            });
+        });
+        
+        // Toggle password visibility
+        function togglePassword(fieldId) {
+            const passwordInput = document.getElementById(fieldId);
+            const toggleIcon = document.getElementById(fieldId + 'ToggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.className = 'bi bi-eye-slash';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.className = 'bi bi-eye';
+            }
+        }
+        
+        // Password strength checker
+        function checkPasswordStrength() {
+            const password = document.getElementById('password').value;
+            const indicator = document.getElementById('strengthIndicator');
+            
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            
+            indicator.className = 'strength-indicator';
+            if (strength === 1) indicator.classList.add('strength-weak');
+            else if (strength === 2) indicator.classList.add('strength-medium');
+            else if (strength === 3) indicator.classList.add('strength-good');
+            else if (strength >= 4) indicator.classList.add('strength-strong');
+        }
+        
+        // Form validation
+        function validatePasswords() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const confirmField = document.getElementById('confirmPassword');
+            
+            if (password !== confirmPassword) {
+                confirmField.setCustomValidity('Senhas não coincidem');
+                return false;
+            } else {
+                confirmField.setCustomValidity('');
+                return true;
+            }
+        }
+        
+        // Show alert
+        function showAlert(message, type = 'danger') {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertHtml = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            alertContainer.innerHTML = alertHtml;
+        }
+        
+        // Form submission
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Validate user type selection
+            if (!selectedUserType) {
+                showAlert('Por favor, selecione o tipo de conta.', 'warning');
+                return;
+            }
+            
+            // Validate passwords match
+            if (!validatePasswords()) {
+                showAlert('As senhas não coincidem.', 'warning');
+                return;
+            }
+            
+            // Validate form
+            if (!this.checkValidity()) {
+                e.stopPropagation();
+                this.classList.add('was-validated');
+                return;
+            }
+            
+            const formData = new FormData(this);
+            const registerData = {
+                username: formData.get('username'),
+                email: formData.get('email'),
+                password: formData.get('password'),
+                is_coach: formData.get('is_coach') === 'true',
+                newsletter: formData.get('newsletter') === 'on'
+            };
+            
+            // Show loading
+            const registerBtn = document.getElementById('registerBtn');
+            const originalText = registerBtn.innerHTML;
+            registerBtn.innerHTML = '<i class="spinner-border spinner-border-sm me-2"></i>Criando conta...';
+            registerBtn.disabled = true;
+            
+            try {
+                const response = await fetch('{{ url_for("register") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(registerData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                    successModal.show();
+                    
+                    setTimeout(() => {
+                        window.location.href = '{{ url_for("login") }}';
+                    }, 2000);
+                } else {
+                    showAlert(result.message || 'Erro ao criar conta. Tente novamente.', 'danger');
+                }
+            } catch (error) {
+                console.error('Register error:', error);
+                showAlert('Erro de conexão. Tente novamente.', 'danger');
+            } finally {
+                registerBtn.innerHTML = originalText;
+                registerBtn.disabled = false;
+            }
+        });
+        
+        // Real-time password confirmation validation
+        document.getElementById('confirmPassword').addEventListener('input', validatePasswords);
+        
+        // Username availability check (debounced)
+        let usernameTimeout;
+        document.getElementById('username').addEventListener('input', function() {
+            clearTimeout(usernameTimeout);
+            const username = this.value;
+            
+            if (username.length < 3) return;
+            
+            usernameTimeout = setTimeout(async () => {
+                try {
+                    const response = await fetch(`/api/check-username?username=${encodeURIComponent(username)}`);
+                    const result = await response.json();
+                    
+                    if (!result.available) {
+                        this.setCustomValidity('Nome de usuário já está em uso');
+                    } else {
+                        this.setCustomValidity('');
+                    }
+                } catch (error) {
+                    console.error('Username check error:', error);
+                }
+            }, 500);
+        });
+    </script>
+</body>
+</html>

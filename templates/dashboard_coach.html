@@ -1,0 +1,512 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Coach - 1Rep Pro{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h2 fw-bold text-primary">
+            <i class="bi bi-speedometer2 me-2"></i>
+            Dashboard Coach
+        </h1>
+        <p class="text-muted mb-0">Visão geral dos seus atletas e performance geral</p>
+    </div>
+    <div>
+        <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#addClientModal">
+            <i class="bi bi-person-plus me-2"></i>
+            Novo Cliente
+        </button>
+        <div class="btn-group">
+            <button class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                <i class="bi bi-calendar3 me-2"></i>
+                Últimos 30 dias
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">Últimos 7 dias</a></li>
+                <li><a class="dropdown-item" href="#">Últimos 30 dias</a></li>
+                <li><a class="dropdown-item" href="#">Últimos 90 dias</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- KPIs Row -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6">
+        <div class="card metric-card text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-2">Total Clientes</h6>
+                        <h2 class="mb-0">{{ clientes|length }}</h2>
+                        <small class="text-white-50">
+                            <i class="bi bi-arrow-up text-success"></i>
+                            +12% este mês
+                        </small>
+                    </div>
+                    <i class="bi bi-people-fill display-6 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6">
+        <div class="card metric-card text-white" style="background: linear-gradient(135deg, #27ae60, #2ecc71);">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-2">Clientes Ativos</h6>
+                        <h2 class="mb-0">85%</h2>
+                        <small class="text-white-50">
+                            <i class="bi bi-arrow-up text-success"></i>
+                            +5% esta semana
+                        </small>
+                    </div>
+                    <i class="bi bi-activity display-6 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6">
+        <div class="card metric-card text-white" style="background: linear-gradient(135deg, #f39c12, #e67e22);">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-2">Resultados Positivos</h6>
+                        <h2 class="mb-0">92%</h2>
+                        <small class="text-white-50">
+                            <i class="bi bi-arrow-up text-success"></i>
+                            Média dos clientes
+                        </small>
+                    </div>
+                    <i class="bi bi-trophy-fill display-6 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6">
+        <div class="card metric-card text-white" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title mb-2">Avaliações Pendentes</h6>
+                        <h2 class="mb-0">7</h2>
+                        <small class="text-white-50">
+                            <i class="bi bi-clock text-warning"></i>
+                            Requer atenção
+                        </small>
+                    </div>
+                    <i class="bi bi-exclamation-triangle-fill display-6 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content Row -->
+<div class="row">
+    <!-- Clientes List -->
+    <div class="col-xl-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-people me-2"></i>
+                    Meus Clientes
+                </h5>
+                <div class="d-flex gap-2">
+                    <input type="text" class="form-control form-control-sm" placeholder="Buscar cliente..." id="searchClient">
+                    <button class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-filter"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Objetivo</th>
+                                <th>Progresso</th>
+                                <th>Última Atividade</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cliente in clientes %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                                             style="width: 40px; height: 40px; font-weight: bold;">
+                                            {{ cliente.nome[0].upper() }}
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0">{{ cliente.nome }}</h6>
+                                            <small class="text-muted">{{ cliente.email }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">{{ cliente.objetivo_primario or 'Não definido' }}</span>
+                                </td>
+                                <td>
+                                    <div class="progress" style="height: 6px;">
+                                        <div class="progress-bar bg-success" style="width: 65%"></div>
+                                    </div>
+                                    <small class="text-muted">65% da meta</small>
+                                </td>
+                                <td>
+                                    <small class="text-muted">{{ cliente.updated_at.strftime('%d/%m/%Y') if cliente.updated_at else 'Nunca' }}</small>
+                                </td>
+                                <td>
+                                    <span class="status-indicator status-excellent"></span>
+                                    Ativo
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary" data-bs-toggle="tooltip" title="Ver Detalhes">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-outline-success" data-bs-toggle="tooltip" title="Nova Avaliação">
+                                            <i class="bi bi-plus"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center py-4">
+                                    <div class="text-muted">
+                                        <i class="bi bi-person-plus display-4 d-block mb-3"></i>
+                                        <h5>Nenhum cliente cadastrado</h5>
+                                        <p>Comece adicionando seu primeiro cliente</p>
+                                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addClientModal">
+                                            <i class="bi bi-plus me-2"></i>
+                                            Adicionar Cliente
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar Widgets -->
+    <div class="col-xl-4">
+        <!-- Ações Rápidas -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-lightning-charge me-2"></i>
+                    Ações Rápidas
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('modulo1') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-person-badge me-2"></i>
+                        Nova Avaliação
+                    </a>
+                    <a href="{{ url_for('modulo3') }}" class="btn btn-outline-success">
+                        <i class="bi bi-apple me-2"></i>
+                        Plano Nutricional
+                    </a>
+                    <a href="{{ url_for('modulo5') }}" class="btn btn-outline-warning">
+                        <i class="bi bi-activity me-2"></i>
+                        Programa de Treino
+                    </a>
+                    <button class="btn btn-outline-info" onclick="generateReport()">
+                        <i class="bi bi-file-earmark-text me-2"></i>
+                        Gerar Relatório
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Alertas e Notificações -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-bell me-2"></i>
+                    Alertas Importantes
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning alert-sm" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    <strong>3 clientes</strong> com avaliações pendentes
+                </div>
+                <div class="alert alert-info alert-sm" role="alert">
+                    <i class="bi bi-calendar3 me-2"></i>
+                    <strong>2 reavaliações</strong> programadas para esta semana
+                </div>
+                <div class="alert alert-success alert-sm mb-0" role="alert">
+                    <i class="bi bi-trophy me-2"></i>
+                    <strong>João Silva</strong> atingiu meta de peso!
+                </div>
+            </div>
+        </div>
+        
+        <!-- Estatísticas Rápidas -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-graph-up me-2"></i>
+                    Estatísticas da Semana
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between">
+                        <span>Avaliações Completas</span>
+                        <strong>12</strong>
+                    </div>
+                    <div class="progress mt-1" style="height: 4px;">
+                        <div class="progress-bar bg-primary" style="width: 80%"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between">
+                        <span>Planos Criados</span>
+                        <strong>8</strong>
+                    </div>
+                    <div class="progress mt-1" style="height: 4px;">
+                        <div class="progress-bar bg-success" style="width: 60%"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-0">
+                    <div class="d-flex justify-content-between">
+                        <span>Consultas Agendadas</span>
+                        <strong>15</strong>
+                    </div>
+                    <div class="progress mt-1" style="height: 4px;">
+                        <div class="progress-bar bg-warning" style="width: 90%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Client Modal -->
+<div class="modal fade" id="addClientModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-person-plus me-2"></i>
+                    Adicionar Novo Cliente
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addClientForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="clientName" class="form-label">Nome Completo</label>
+                                <input type="text" class="form-control" id="clientName" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="clientEmail" class="form-label">E-mail</label>
+                                <input type="email" class="form-control" id="clientEmail" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="clientPhone" class="form-label">Telefone</label>
+                                <input type="tel" class="form-control" id="clientPhone">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="clientBirth" class="form-label">Data de Nascimento</label>
+                                <input type="date" class="form-control" id="clientBirth">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="clientGender" class="form-label">Sexo</label>
+                                <select class="form-select" id="clientGender">
+                                    <option value="">Selecionar...</option>
+                                    <option value="masculino">Masculino</option>
+                                    <option value="feminino">Feminino</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="clientHeight" class="form-label">Altura (m)</label>
+                                <input type="number" class="form-control" id="clientHeight" step="0.01" min="1" max="3">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="clientWeight" class="form-label">Peso (kg)</label>
+                                <input type="number" class="form-control" id="clientWeight" step="0.1" min="30" max="300">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="clientObjective" class="form-label">Objetivo Principal</label>
+                        <select class="form-select" id="clientObjective">
+                            <option value="">Selecionar objetivo...</option>
+                            <option value="emagrecimento">Emagrecimento</option>
+                            <option value="hipertrofia">Hipertrofia Muscular</option>
+                            <option value="forca">Ganho de Força</option>
+                            <option value="performance">Melhora da Performance</option>
+                            <option value="recomposicao">Recomposição Corporal</option>
+                            <option value="saude">Saúde Geral</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="clientNotes" class="form-label">Observações Iniciais</label>
+                        <textarea class="form-control" id="clientNotes" rows="3" 
+                                  placeholder="Histórico médico, limitações, preferências..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="addClient()">
+                    <i class="bi bi-check me-2"></i>
+                    Adicionar Cliente
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Search functionality
+    document.getElementById('searchClient').addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const rows = document.querySelectorAll('tbody tr');
+        
+        rows.forEach(row => {
+            const name = row.querySelector('h6')?.textContent.toLowerCase() || '';
+            const email = row.querySelector('small')?.textContent.toLowerCase() || '';
+            
+            if (name.includes(searchTerm) || email.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+    
+    // Add client function
+    async function addClient() {
+        const form = document.getElementById('addClientForm');
+        const formData = new FormData(form);
+        
+        const clientData = {
+            nome: document.getElementById('clientName').value,
+            email: document.getElementById('clientEmail').value,
+            telefone: document.getElementById('clientPhone').value,
+            data_nascimento: document.getElementById('clientBirth').value,
+            sexo: document.getElementById('clientGender').value,
+            altura: parseFloat(document.getElementById('clientHeight').value),
+            peso: parseFloat(document.getElementById('clientWeight').value),
+            objetivo_primario: document.getElementById('clientObjective').value,
+            dados_adicionais: document.getElementById('clientNotes').value
+        };
+        
+        try {
+            showLoading();
+            
+            const response = await apiRequest('/api/clients', clientData, 'POST');
+            
+            if (response.success) {
+                showToast('Cliente adicionado com sucesso!', 'success');
+                bootstrap.Modal.getInstance(document.getElementById('addClientModal')).hide();
+                form.reset();
+                
+                // Refresh page after a short delay
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            } else {
+                showToast(response.message || 'Erro ao adicionar cliente', 'danger');
+            }
+        } catch (error) {
+            console.error('Error adding client:', error);
+            showToast('Erro ao adicionar cliente', 'danger');
+        } finally {
+            hideLoading();
+        }
+    }
+    
+    // Generate report function
+    async function generateReport() {
+        try {
+            showLoading();
+            
+            const response = await apiRequest('/api/reports/summary', {}, 'POST');
+            
+            if (response.success) {
+                showToast('Relatório gerado com sucesso!', 'success');
+                
+                // Create and download the report
+                const blob = new Blob([JSON.stringify(response.data, null, 2)], {
+                    type: 'application/json'
+                });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `relatorio_${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } else {
+                showToast('Erro ao gerar relatório', 'danger');
+            }
+        } catch (error) {
+            console.error('Error generating report:', error);
+            showToast('Erro ao gerar relatório', 'danger');
+        } finally {
+            hideLoading();
+        }
+    }
+    
+    // Initialize tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+        
+        // Auto-update dashboard every 5 minutes
+        setInterval(function() {
+            // You could implement real-time updates here
+            console.log('Dashboard auto-refresh');
+        }, 300000);
+    });
+</script>
+{% endblock %}
